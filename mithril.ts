@@ -1184,7 +1184,7 @@ function factory(window) {
     }
 
     m.trust = function (value) {
-        value = String(value); // eslint-disable-line no-new-wrappers
+        value = new String(value); // eslint-disable-line no-new-wrappers
         value.$trusted = true;
         return value;
     };

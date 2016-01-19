@@ -964,7 +964,7 @@ function factory(window) {
         return index < 0 ? nodeCache.push(element) - 1 : index;
     }
     m.trust = function (value) {
-        value = String(value); // eslint-disable-line no-new-wrappers
+        value = new String(value); // eslint-disable-line no-new-wrappers
         value.$trusted = true;
         return value;
     };
