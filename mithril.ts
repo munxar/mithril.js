@@ -176,7 +176,7 @@ function factory(window) {
 
     // testing API
     m.deps = function (mock) {
-        initialize(window = mock || window)
+        initialize(window = mock || window);
         return window
     };
 
@@ -187,7 +187,7 @@ function factory(window) {
 
     function forKeys(list, f) {
         forEach(list, function (attrs, i) {
-            attrs = attrs && attrs.attrs
+            attrs = attrs && attrs.attrs;
             return attrs && attrs.key != null && f(attrs, i)
         })
     }
@@ -210,7 +210,7 @@ function factory(window) {
     // This function was causing deopts in Chrome.
     function injectTextNode(parent, first, index, data) {
         try {
-            insertNode(parent, first, index)
+            insertNode(parent, first, index);
             first.nodeValue = data
         } catch (e) {
             // IE erroneously throws error when appending an empty text node
@@ -222,7 +222,7 @@ function factory(window) {
         // recursively flatten array
         for (var i = 0; i < list.length; i++) {
             if (isArray(list[i])) {
-                list = list.concat.apply([], list)
+                list = list.concat.apply([], list);
                 // check current index again while there is an array at this
                 // index.
                 i--
@@ -242,7 +242,7 @@ function factory(window) {
 
     function handleKeysDiffer(data, existing, cached, parent) {
         forKeys(data, function (key, i) {
-            key = key.key
+            key = key.key;
             if (existing[key]) {
                 existing[key] = {
                     action: MOVE,
@@ -254,58 +254,58 @@ function factory(window) {
             } else {
                 existing[key] = {action: INSERTION, index: i}
             }
-        })
+        });
 
-        var actions = []
+        var actions = [];
 
         forOwn(existing, function (value) {
             actions.push(value)
-        })
+        });
 
         var changes = actions.sort(sortChanges);
         var newCached:any = new Array(cached.length);
         newCached.nodes = cached.nodes.slice();
 
         forEach(changes, function (change) {
-            var index = change.index
+            var index = change.index;
 
             switch (change.action) {
                 case DELETION:
-                    clear(cached[index].nodes, cached[index])
-                    newCached.splice(index, 1)
-                    break
+                    clear(cached[index].nodes, cached[index]);
+                    newCached.splice(index, 1);
+                    break;
 
                 case INSERTION:
-                    var dummy = $document.createElement("div")
-                    dummy.key = data[index].attrs.key
-                    insertNode(parent, dummy, index)
+                    var dummy = $document.createElement("div");
+                    dummy.key = data[index].attrs.key;
+                    insertNode(parent, dummy, index);
                     newCached.splice(index, 0, {
                         attrs: {key: data[index].attrs.key},
                         nodes: [dummy]
-                    })
-                    newCached.nodes[index] = dummy
-                    break
+                    });
+                    newCached.nodes[index] = dummy;
+                    break;
 
                 case MOVE:
-                    var changeElement = change.element
-                    var maybeChanged = parent.childNodes[index]
+                    var changeElement = change.element;
+                    var maybeChanged = parent.childNodes[index];
                     if (maybeChanged !== changeElement && changeElement !== null) {
                         parent.insertBefore(changeElement, maybeChanged || null)
                     }
-                    newCached[index] = cached[change.from]
+                    newCached[index] = cached[change.from];
                     newCached.nodes[index] = changeElement
             }
-        })
+        });
 
         return newCached
     }
 
     function diffKeys(data, cached, existing, parentElement) {
-        var keysDiffer = data.length !== cached.length
+        var keysDiffer = data.length !== cached.length;
 
         if (!keysDiffer) {
             forKeys(data, function (attrs, i) {
-                var cachedCell = cached[i]
+                var cachedCell = cached[i];
                 return keysDiffer = cachedCell &&
                     cachedCell.attrs &&
                     cachedCell.attrs.key !== attrs.key
@@ -324,7 +324,7 @@ function factory(window) {
         // update the list of DOM nodes by collecting the nodes from each item
         forEach(data, function (_, i) {
             if (cached[i] != null) nodes.push.apply(nodes, cached[i].nodes)
-        })
+        });
 
         // remove items from the end of the array if the new array is shorter
         // than the old one. if errors ever happen here, the issue is most
@@ -334,32 +334,32 @@ function factory(window) {
             if (node.parentNode != null && nodes.indexOf(node) < 0) {
                 clear([node], [cached[i]])
             }
-        })
+        });
 
-        if (data.length < cached.length) cached.length = data.length
+        if (data.length < cached.length) cached.length = data.length;
 
         cached.nodes = nodes
     }
 
     function buildArrayKeys(data) {
-        var guid = 0
+        var guid = 0;
         forKeys(data, function () {
             forEach(data, function (attrs) {
-                attrs = attrs && attrs.attrs
+                attrs = attrs && attrs.attrs;
                 if (attrs && attrs.key == null) {
                     attrs.key = "__mithril__" + guid++
                 }
-            })
+            });
             return true
         })
     }
 
     // shallow array compare, sorts
     function arraySortCompare(a, b) {
-        a.sort()
-        b.sort()
-        var len = a.length
-        if (len !== b.length) return false
+        a.sort();
+        b.sort();
+        var len = a.length;
+        if (len !== b.length) return false;
         for (var i = 0; i < len; i++) {
             if (a[i] !== b[i]) return false
         }
@@ -367,13 +367,13 @@ function factory(window) {
     }
 
     function elemIsDifferentEnough(data, cached, dataAttrKeys) {
-        if (data.tag !== cached.tag) return true
+        if (data.tag !== cached.tag) return true;
         if (!arraySortCompare(dataAttrKeys, Object.keys(cached.attrs))) {
             return true
         }
 
-        if (data.attrs.id !== cached.attrs.id) return true
-        if (data.attrs.key !== cached.attrs.key) return true
+        if (data.attrs.id !== cached.attrs.id) return true;
+        if (data.attrs.key !== cached.attrs.key) return true;
 
         if (m.redraw.strategy() === "all") {
             return !(cached.configContext &&
@@ -410,31 +410,31 @@ function factory(window) {
                     namespace
     }
 
-    var pendingRequests = 0
+    var pendingRequests = 0;
     m.startComputation = function () {
         pendingRequests++
-    }
+    };
     m.endComputation = function () {
         if (pendingRequests > 1) {
             pendingRequests--
         } else {
-            pendingRequests = 0
+            pendingRequests = 0;
             m.redraw()
         }
-    }
+    };
 
     function unloadCachedControllers(cached, views, controllers) {
         if (controllers.length) {
-            cached.views = views
-            cached.controllers = controllers
+            cached.views = views;
+            cached.controllers = controllers;
             forEach(controllers, function (controller) {
                 if (controller.onunload && controller.onunload.$old) {
                     controller.onunload = controller.onunload.$old
                 }
 
                 if (pendingRequests && controller.onunload) {
-                    var onunload = controller.onunload
-                    controller.onunload = noop
+                    var onunload = controller.onunload;
+                    controller.onunload = noop;
                     controller.onunload.$old = onunload
                 }
             })
@@ -444,9 +444,9 @@ function factory(window) {
     function scheduleConfigsToBeCalled(configs, data, node, isNew, cached) {
         // schedule configs to be called. They are called after `build` finishes
         // running
-        var config = data.attrs.config
+        var config = data.attrs.config;
         if (isFunction(config)) {
-            var context = cached.configContext = cached.configContext || {}
+            var context = cached.configContext = cached.configContext || {};
 
             // bind
             configs.push(function () {
@@ -463,19 +463,19 @@ function factory(window) {
                               views,
                               configs,
                               controllers) {
-        var node = cached.nodes[0]
+        var node = cached.nodes[0];
         if (hasKeys) {
             setAttributes(node, data.tag, data.attrs, cached.attrs, namespace)
         }
 
         cached.children = build(node, data.tag, undefined, undefined,
             data.children, cached.children, false, 0,
-            data.attrs.contenteditable ? node : editable, namespace, configs)
+            data.attrs.contenteditable ? node : editable, namespace, configs);
 
-        cached.nodes.intact = true
+        cached.nodes.intact = true;
 
         if (controllers.length) {
-            cached.views = views
+            cached.views = views;
             cached.controllers = controllers
         }
 
@@ -519,10 +519,10 @@ function factory(window) {
                            editable,
                            index,
                            parentTag) {
-        var nodes = cached.nodes
+        var nodes = cached.nodes;
         if (!editable || editable !== $document.activeElement) {
             if (data.$trusted) {
-                clear(nodes, cached)
+                clear(nodes, cached);
                 nodes = injectHTML(parentElement, index, data)
             } else if (parentTag === "textarea") {
                 // <textarea> uses `value` instead of `nodeValue`.
@@ -536,15 +536,15 @@ function factory(window) {
                     nodes.length > 1 ||
                     (nodes[0].nodeValue.trim && !nodes[0].nodeValue.trim())
                 ) {
-                    clear(cached.nodes, cached)
+                    clear(cached.nodes, cached);
                     nodes = [$document.createTextNode(data)]
                 }
                 injectTextNode(parentElement, nodes[0], index, data)
             }
         }
 
-        cached = new data.constructor(data)
-        cached.nodes = nodes
+        cached = new data.constructor(data);
+        cached.nodes = nodes;
         return cached
     }
 
@@ -561,7 +561,7 @@ function factory(window) {
             return reattachNodes(data, cached, parent, editable, index,
                 parentTag)
         } else {
-            cached.nodes.intact = true
+            cached.nodes.intact = true;
             return cached
         }
     }
@@ -571,7 +571,7 @@ function factory(window) {
             // fix offset of next element if item was a trusted string w/ more
             // than one HTML element. the first clause in the regexp matches
             // elements the second clause (after the pipe) matches text nodes
-            var match = item.match(/<[^\/]|\>\s*[^<]/g)
+            var match = item.match(/<[^\/]|\>\s*[^<]/g);
             if (match != null) return match.length
         } else if (isArray(item)) {
             return item.length
@@ -589,10 +589,10 @@ function factory(window) {
                         editable,
                         namespace,
                         configs) {
-        data = flatten(data)
-        var nodes = []
-        var intact = cached.length === data.length
-        var subArrayCount = 0
+        data = flatten(data);
+        var nodes = [];
+        var intact = cached.length === data.length;
+        var subArrayCount = 0;
 
         // keys algorithm:
         // sort elements without recreating them if keys are present
@@ -602,47 +602,47 @@ function factory(window) {
         // 3) if key exists in new list, change action from deletion to a move
         // 4) for each key, handle its corresponding action as marked in
         //    previous steps
-        var existing = {}
-        var shouldMaintainIdentities = false
+        var existing = {};
+        var shouldMaintainIdentities = false;
         forKeys(cached, function (attrs, i) {
-            shouldMaintainIdentities = true
+            shouldMaintainIdentities = true;
             existing[cached[i].attrs.key] = {action: DELETION, index: i}
-        })
+        });
 
-        buildArrayKeys(data)
+        buildArrayKeys(data);
         if (shouldMaintainIdentities) {
             cached = diffKeys(data, cached, existing, parentElement)
         }
         // end key algorithm
 
         // don't change: faster than forEach
-        var cacheCount = 0
+        var cacheCount = 0;
         for (var i = 0, len = data.length; i < len; i++) {
             // diff each item in the array
             var item = build(parentElement, parentTag, cached, index, data[i],
                 cached[cacheCount], shouldReattach,
                 index + subArrayCount || subArrayCount,
-                editable, namespace, configs)
+                editable, namespace, configs);
 
             if (item !== undefined) {
-                intact = intact && item.nodes.intact
-                subArrayCount += getSubArrayCount(item)
+                intact = intact && item.nodes.intact;
+                subArrayCount += getSubArrayCount(item);
                 cached[cacheCount++] = item
             }
         }
 
-        if (!intact) diffArray(data, cached, nodes)
+        if (!intact) diffArray(data, cached, nodes);
 
         return cached
     }
 
     function makeCache(data, cached, index, parentIndex, parentCache) {
         if (cached != null) {
-            if (type.call(cached) === type.call(data)) return cached
+            if (type.call(cached) === type.call(data)) return cached;
 
             if (parentCache && parentCache.nodes) {
-                var offset = index - parentIndex
-                var end = offset + (isArray(data) ? data : cached.nodes).length
+                var offset = index - parentIndex;
+                var end = offset + (isArray(data) ? data : cached.nodes).length;
 
                 clear(parentCache.nodes.slice(offset, end),
                     parentCache.slice(offset, end))
@@ -651,11 +651,11 @@ function factory(window) {
             }
         }
 
-        cached = new data.constructor()
+        cached = new data.constructor();
         // if constructor creates a virtual dom element, use a blank object as
         // the base cached node instead of copying the virtual el (#277)
-        if (cached.tag) cached = {}
-        cached.nodes = []
+        if (cached.tag) cached = {};
+        cached.nodes = [];
         return cached
     }
 
@@ -709,9 +709,9 @@ function factory(window) {
             attrs: attrs,
             children: children,
             nodes: [node]
-        }
+        };
 
-        unloadCachedControllers(cached, views, controllers)
+        unloadCachedControllers(cached, views, controllers);
 
         if (cached.children && !cached.children.nodes) {
             cached.children.nodes = []
