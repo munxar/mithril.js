@@ -16,11 +16,7 @@ function factory(window) {
     var isArray = Array.isArray || function (object) {
         return type.call(object) === "[object Array]";
     };
-    function noop() {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i - 0] = arguments[_i];
-        }
+    function noop(ignore) {
     }
     function forEach(list, f) {
         list.some(function (item, index) { return f(item, index); });
@@ -458,7 +454,7 @@ function factory(window) {
             // fix offset of next element if item was a trusted string w/ more
             // than one HTML element. the first clause in the regexp matches
             // elements the second clause (after the pipe) matches text nodes
-            var match = item.match(/<[^\/]|\>\s*[^<]/g);
+            var match = item.match(/<[^\/]|>\s*[^<]/g);
             if (match != null)
                 return match.length;
         }
@@ -762,11 +758,12 @@ function factory(window) {
                     node.style[rule] = value;
                 }
             });
-            for (var rule in cachedAttr)
-                if (hasOwn.call(cachedAttr, rule)) {
+            for (var rule in cachedAttr) {
+                if (cachedAttr.hasOwnProperty(rule)) {
                     if (!hasOwn.call(dataAttr, rule))
                         node.style[rule] = "";
                 }
+            }
         }
         else if (namespace != null) {
             // handle SVG
@@ -1267,7 +1264,7 @@ function factory(window) {
                         throw new Error("Ensure the default route matches " +
                             "one of the routes defined in m.route");
                     }
-                    isDefaultRoute = true;
+                    //isDefaultRoute = true;
                     m.route(arg1, true);
                     isDefaultRoute = false;
                 }
@@ -1325,7 +1322,7 @@ function factory(window) {
             return true;
         }
         for (var route in router) {
-            if (hasOwn.call(router, route)) {
+            if (router.hasOwnProperty(route)) {
                 if (route === path) {
                     m.mount(root, router[route]);
                     return true;
@@ -1375,7 +1372,6 @@ function factory(window) {
     }
     function setScroll() {
         if (m.route.mode !== "hash" && $location.hash) {
-            $location.hash = $location.hash;
         }
         else {
             window.scrollTo(0, 0);
@@ -1591,8 +1587,8 @@ function factory(window) {
         prop.then = function (resolve, reject) {
             return propify(promise.then(resolve, reject), initialValue);
         };
-        prop.catch = prop.then.bind(null, null);
-        prop.finally = function (callback) {
+        prop["catch"] = prop.then.bind(null, null);
+        prop["finally"] = function (callback) {
             function _callback() {
                 return m.deferred().resolve(callback()).promise;
             }
@@ -1761,7 +1757,7 @@ function factory(window) {
         }
         return url;
     }
-    function defaultExtract(jsonp, args) {
+    function defaultExtract(jsonp, ignore) {
         return jsonp.responseText;
     }
     m.request = function (options) {

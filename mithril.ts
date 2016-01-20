@@ -55,7 +55,7 @@ function factory(window) {
             return type.call(object) === "[object Array]";
         };
 
-    function noop(...args) {
+    function noop(ignore?) {
     }
 
     function forEach(list, f) {
@@ -571,7 +571,7 @@ function factory(window) {
             // fix offset of next element if item was a trusted string w/ more
             // than one HTML element. the first clause in the regexp matches
             // elements the second clause (after the pipe) matches text nodes
-            var match = item.match(/<[^\/]|\>\s*[^<]/g);
+            var match = item.match(/<[^\/]|>\s*[^<]/g);
             if (match != null) return match.length
         } else if (isArray(item)) {
             return item.length
@@ -966,8 +966,10 @@ function factory(window) {
                 }
             });
 
-            for (var rule in cachedAttr) if (hasOwn.call(cachedAttr, rule)) {
-                if (!hasOwn.call(dataAttr, rule)) node.style[rule] = ""
+            for (var rule in cachedAttr) {
+                if (cachedAttr.hasOwnProperty(rule)) {
+                    if (!hasOwn.call(dataAttr, rule)) node.style[rule] = ""
+                }
             }
         } else if (namespace != null) {
             // handle SVG
@@ -1543,7 +1545,7 @@ function factory(window) {
                             "one of the routes defined in m.route")
                     }
 
-                    isDefaultRoute = true;
+                    //isDefaultRoute = true;
                     m.route(arg1, true);
                     isDefaultRoute = false
                 }
@@ -1608,7 +1610,7 @@ function factory(window) {
         }
 
         for (var route in router) {
-            if (hasOwn.call(router, route)) {
+            if (router.hasOwnProperty(route)) {
                 if (route === path) {
                     m.mount(root, router[route]);
                     return true
@@ -1619,6 +1621,8 @@ function factory(window) {
                         .replace(/:[^\/]+/g, "([^\\/]+)") + "\/?$");
 
                 if (matcher.test(path)) {
+
+
                     /* eslint-disable no-loop-func */
                     path.replace(matcher, function () {
                         var keys = route.match(/:[^\/]+/g) || [];
@@ -1667,7 +1671,7 @@ function factory(window) {
 
     function setScroll() {
         if (m.route.mode !== "hash" && $location.hash) {
-            $location.hash = $location.hash
+            //$location.hash = $location.hash
         } else {
             window.scrollTo(0, 0)
         }
@@ -1889,9 +1893,9 @@ function factory(window) {
             return propify(promise.then(resolve, reject), initialValue)
         };
 
-        prop.catch = prop.then.bind(null, null);
+        prop["catch"] = prop.then.bind(null, null);
 
-        prop.finally = function (callback) {
+        prop["finally"] = function (callback) {
             function _callback() {
                 return m.deferred().resolve(callback()).promise
             }
@@ -2090,7 +2094,7 @@ function factory(window) {
         return url
     }
 
-    function defaultExtract(jsonp?, args?) {
+    function defaultExtract(jsonp?, ignore?) {
         return jsonp.responseText
     }
 
